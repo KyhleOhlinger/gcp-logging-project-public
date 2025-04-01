@@ -1,0 +1,24 @@
+name: Terraform Linting and Formatting
+
+on:
+  workflow_call:
+
+jobs:
+  linting: #Not including formatting as it can cause weird pull issues with Github Actions, rather use Black
+    runs-on: ubuntu-latest
+
+     # Checkout code
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+        # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    # Lint Terraform code
+    - name: Lint Terraform files
+      run: |
+        curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+        tflint --init
+        tflint

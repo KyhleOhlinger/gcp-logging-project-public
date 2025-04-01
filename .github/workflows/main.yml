@@ -1,0 +1,41 @@
+name: 'Terraform Core CI'
+
+on:
+    workflow_dispatch:
+      inputs:
+        # Terraform action you want to perform
+        action:
+          description: 'Terraform Action to Perform'
+          default: 'Terraform-apply-core'
+          required: false
+          type: choice
+          options:
+          - Terraform-apply-core
+          - Terraform-destroy-core
+    push:
+      branches:
+        - main
+    pull_request:
+      branches:
+       - main
+
+jobs:
+    terraform-apply-liniting:
+      uses: ./.github/workflows/terraform-linting.yml
+      permissions:
+          contents: read
+      secrets: inherit
+
+    terraform-apply-core:
+      needs: terraform-apply-liniting 
+      uses: ./.github/workflows/terraform-apply-core.yml
+      permissions:
+          contents: read
+      secrets: inherit
+
+    terraform-destroy-core:
+      needs: terraform-apply-liniting 
+      uses: ./.github/workflows/terraform-destroy-core.yml
+      permissions:
+          contents: read
+      secrets: inherit
